@@ -28,13 +28,13 @@ for (n in nums){
 
 ### Task4 ###
 isGapYear <- function(year){
-    if (year%%==0 && year%%100!=0 || year%%400==0){
+    if (year%%4==0 && year%%100!=0 || year%%400==0){
         print("閏年")
-        return 1
+        return TRUE
     }
     else{
         print("非閏年")
-        return 0
+        return FALSE
     }
 }
 
@@ -42,9 +42,35 @@ isGapYear <- function(year){
 ans <- sample(0:9, 4)
 guess.count <- 0
 
-repeat{
-    print('Please input 4 numbers to quess:')
-    guess <- scan(nmax=4)
-    a <- b <- 0
+repeat {
+  print("Please input 4 non-repetitive numbers.[integers between 0 to 9, aka c(0:9)")
+  guess <- scan(nmax = 4)
+  
+  a <- b <- 0
+  
+  if (!any(duplicated(guess))){
+    guess.count <- guess.count + 1
     
+    for (i in 1:4) {
+      if (guess[i] == ans[i]) {
+        a <- a + 1
+      } else {
+        for (j in 1:4) {
+          if (guess[i] == ans[j]) {
+            b <- b + 1
+          }
+        }
+      }
+    }
+    
+    cat("==== Your guess :", guess, ", Match : ", a, "A", b, "B\n")
+
+    if (a == 4) {
+      cat("==== CORRECT! You guess for", guess.count, "times")
+      break
+    }
+    
+  } else {
+    cat("==== Input Error: Please input 4 <non-repetitive> numbers.\n")
+  }
 }
