@@ -1,0 +1,20 @@
+library(rvest)
+coin = read_html("https://coinmarketcap.com/currencies/bitcoin/historical-data/")
+date = html_nodes(coin, '.text-right .text-left')
+title = html_nodes(coin, 'th')
+open = html_nodes(coin, 'td:nth-child(3)')
+high = html_nodes(coin, 'td:nth-child(3)')
+low = html_nodes(coin, 'td:nth-child(4)')
+close = html_nodes(coin, 'td:nth-child(5)')
+volume = html_nodes(coin, 'td:nth-child(6)')
+
+date = as.Date(html_text(date), '%b %d, %Y')
+title = html_text(title)
+open = html_text(open)
+high = html_text(high)
+low = html_text(low)
+close = html_text(close)
+volume = html_text(volume)
+
+table = data.frame(date, open, high, low, close, volume)
+table
