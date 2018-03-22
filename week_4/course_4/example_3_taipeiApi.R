@@ -1,6 +1,6 @@
 ### example_3_taipeiApi
 # Taipei api http://oops.gov.taipei/
-##########################################################ˇ
+##########################################################Ë
 
 library(jsonlite)
 
@@ -11,6 +11,4 @@ url <- 'http://data.ntpc.gov.tw/od/data/api/54DDDC93-589C-4858-9C95-18B2046CC1FC
 jsonData <- fromJSON(url, flatten = TRUE)
 
 #Write it into csv.
-# write.csv(file = 'test.csv', jsonData , fileEncoding = 'utf-8')
-
-
+write.csv(file = 'test.csv', jsonData , fileEncoding = 'utf-8')
