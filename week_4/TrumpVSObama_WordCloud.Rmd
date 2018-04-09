@@ -1,0 +1,99 @@
+---
+title: "Word Cloud - Donald Trump v.s. Barack Obama"
+author: "ChiChen Lo"
+date: '`r Sys.Date()`'
+---
+# Summary
+This R markdown demonstrate how to crawl corpus from public Facebook pages and use some basic NLP tools to clean the messy corpus. At last, two word cloud graphes are created for visualized comparison between the common words used in the posts of two famous polictics.
+***
+
+## Import all packages
+Import all packages needed, including:  
+- __worldcloud (including the requiring RColorBlew package)__: for wordcloud generation  
+- __tm__: for most NLP manipulations  
+- __Rfacebook__: for crawling facebook pages.  
+```{r results='hide'}
+library(RColorBrewer)
+library(wordcloud)
+library(tm)
+library(Rfacebook)
+```
+***
+
+## Donald Trump and Barack Obama's pageID:
+The faceook IDs: from https://findmyfbid.com/  
+The Rfacebook.getPages can extract list of posts from public Facebook page. However, if the given n (number of posts inquery) is too large, the FB API may block the token and thus return an error.
+```{r}
+trumpID = '153080620724'
+obamaID = '6815841748'
+token = 'EAACEdEose0cBAFHNXFe3Q5hswPJ6wdaMzrZCrxkDO9nlV6gXS9C9wtcReDd42PJlgk0oCUy6aoGZAnkL4D2TSzkAQtflR7C3aRrtwMZCBNMpZA6ZBfeVzCYP2EQityiaLvLt9uUvLaGEVRJZCNcLlKZAHXZAq82BhYlBXIqFoBwDHgx25Vah98owrzl5hCBVpM2oWlmr0uAOWg32eZAtjfZBx348P9jCVUZCaMZD'
+
+# get top 300 posts from Trump and Obama's facebook
+trump_pages = getPage(trumpID, token, n=300)
+obama_pages = getPage(obamaID, token, n=300)
+```
+***
+## corpus cleaning
+Cleaning the crawled corpus, to make the later word cloud more concise and meaningful.  
+
+1. __remove emoji__: It surprise me that Donald Trump use a lot of emojis. Removing emojis is extremely difficult and frustrating task, since there are always expections in you regular expression that some emojis would be miss. After hours of struggle with emoji, I decide to remove every thing but English charators. This method may remove some contents other than emojis, but it is effective and remain the main texts.
+
+2. __convert every charactor in to lower case__: Noted that if the charactors with no lower case are not remove in the last steps, the function would just fail.
+
+3. __remove numbers__
+
+4. __remove common english stopwords (from tm package)__: It is almost part of SOP of any NLP analysis. The stopword in any language could dominate the data and would corrupt the algorithms if they are not removed. It is the same case in world colud.
+
+5. __emove punctuations__
+```{r}
+doc_O = Corpus(VectorSource(obama_pages$message))
+doc_T = Corpus(VectorSource(trump_pages$message))
+
+#remove emoji
+regex = "[^\x01-\x7F]+"
+ #(Only Trump use emoji)
+doc_T = tm_map(doc_T, content_transformer(function(x) gsub(x, pattern=regex, replacement=' ')))
+
+# convert charactors in to lower case
+doc_O = tm_map(doc_O, content_transformer(tolower))
+doc_T = tm_map(doc_T, content_transformer(tolower))
+
+# remove numbers
+doc_O = tm_map(doc_O, removeNumbers)
+doc_T = tm_map(doc_T, removeNumbers)
+
+# remove common english stopwords (from tm package)
+doc_O = tm_map(doc_O, removeWords, stopwords("english"))
+doc_T = tm_map(doc_T, removeWords, stopwords("english"))
+
+# remove punctuations
+doc_O = tm_map(doc_O, removePunctuation)
+doc_T = tm_map(doc_T, removePunctuation)
+
+m_O = as.matrix(TermDocumentMatrix(doc_O))
+m_T = as.matrix(TermDocumentMatrix(doc_T))
+```
+***
+## sort and make wordcloud
+Count the frequncy of words and sort them according to it.
+Draw the word cloud graphes.
+```{r fig.width=10, fig.height=10}
+v_O = sort(rowSums(m_O),decreasing = TRUE)
+d_O = data.frame(word = names(v_O), freq = v_O)
+head(d_O, 10)
+v_T = sort(rowSums(m_T),decreasing = TRUE)
+d_T = data.frame(word = names(v_T), freq = v_T)
+head(d_T, 10)
+
+wordcloud(words = d_O$word, freq = d_O$freq, min.freq = 1,
+          max.words=200, random.order=FALSE, rot.per=0.1, 
+          colors=brewer.pal(8, "Dark2"))
+wordcloud(words = d_T$word, freq = d_T$freq, min.freq = 1,
+          max.words=200, random.order=FALSE, rot.per=0.35,
+          colors=brewer.pal(8, "Dark2"))
+```
+
+
+## Analysis
+Apparently, the two politics have their focus on different issues. Donald Trump focus on border and security issues of America and Americans, while Barack Obama concentrate on climate and congress issues.
+Also, Obama's word cloud is bigger than Trump's. Which indicate that the divisity of words that Obama used in his posts is larger than the conterpart of the Trump's. It is a share result from many anaysis on Trump's vocburary divisity, but I am surpriced that an corpus of only 300 post can still show this charactoristc.

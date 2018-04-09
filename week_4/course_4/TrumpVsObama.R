@@ -4,7 +4,7 @@ library(RColorBrewer)
 library(wordcloud)
 library(tm)
 library(jsonlite)
-token  = "EAACEdEose0cBAFtiYW8I9bVevm7VfPIS7Mi2s6YAVBv9EzVQr6eVxEjVxcp0JUD0tVdqVyaQEn3hDwes5eUQJuXA25X5ZB9fBSliQ1ZCv3eO3GerCniENGijmZAMSQ3rDwkz3SJ7qZAASVoZAXl7OV8igG370ZC4zdAm7ZCDlErptAmgrZBjiio2XSnexiWDqFlWYLbugO78GH1ZBKL3nEhpRrSJi0pb4Ye8ZD"
+token  = "EAACEdEose0cBAP6pGuTaZC024DRTmHAVWXUappjZACKiE5ZBKMPZAG2qmZBGkks4oDZAhUdojLr73FBtkUY8Hw3ym1PExcZCUtZBUZAw8P9sSR0JCWq9CKoU1qwNscShxTMYljyEtyudO0gQQ4ICFPgMZAxkGu6eqI5ipfwtVJNZAhXqhgSpP2mxHI7SOYro1XjzZCwPnsl2YiTGMAfk0cjlwEpsJGhO8q6yOBUZD"
 B_Obama = "https://graph.facebook.com/v2.12/barackobama?fields=posts%7Bmessage%7D&access_token="
 D_Trump = "https://graph.facebook.com/v2.12/DonaldTrump?fields=posts%7Bmessage%7D&access_token="
 url_Obama = paste0(B_Obama, token)
