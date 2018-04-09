@@ -1,0 +1,122 @@
+---
+title: "Tf-Idf anaylsis on historical English corpus"
+author: "ChiChen Lo"
+date: "`r Sys.Date()`"
+---
+## Summary  
+This markdown code evaluate the subset of the COHA corpus to find out the words used in the last 200 years.
+***
+
+### Import all packages needed and read the corpus
+```{r, message=FALSE}
+library(tm)
+library(Matrix)
+library(ggplot2)
+library(RColorBrewer)
+setwd('~/Courses/DSPwithR/DataScienceProgramming2018spring/Project1/')
+a = Corpus(DirSource('./COHA/'), readerControl = list(language="lat"))
+```
+
+### data cleaning
+```{r}
+a <- tm_map(a , stripWhitespace)
+a <- tm_map(a, tolower)
+a <- tm_map(a, stemDocument, language = "english")
+```
+
+### get the term-document matrix (weighted with TF-IDF)
+```{r}
+terms = TermDocumentMatrix(a, control = list(stopwords=stopwords('english'), weighting = function(x) weightTfIdf(x, normalize = TRUE)))
+```
+
+### Check the top TF-IDF ranking terms and the distribution of terms and the correspoding TF-IDF
+```{r, echo=FALSE}
+freq=rowSums(as.matrix(terms))
+head(sort(freq, decreasing = T), n=24)
+plot(sort(freq, decreasing = T),col="blue",main="TF-IDF frequencies", xlab="rank", ylab = "TF-IDF")
+```
+
+### Analysis every 50 years
+```{r}
+doc_list = Docs(terms)
+doc1800 = grep('.*_18[0-4][0-9]_[0-9]*.txt', doc_list, value = TRUE)
+doc1850 = grep('.*_18[5-9][0-9]_[0-9]*.txt', doc_list, value = TRUE)
+doc1900 = grep('.*_19[0-4][0-9]_[0-9]*.txt', doc_list, value = TRUE)
+doc1950 = grep('.*_19[5-9][0-9]_[0-9]*.txt', doc_list, value = TRUE)
+doc2000 = grep('.*_20[0-4][0-9]_[0-9]*.txt', doc_list, value = TRUE)
+```
+
+### 1800~1849, the top TF-IDF ranked terms
+```{r}
+subM = terms[, doc1800]
+freq = rowSums(as.matrix(subM))
+head(sort(freq, decreasing = T), n=24)
+
+high.freq=tail(sort(freq),n=15)
+hfp.df=as.data.frame(sort(high.freq))
+hfp.df$names <- rownames(hfp.df) 
+ggplot(hfp.df, aes(reorder(names,high.freq), high.freq)) +
+  geom_bar(stat="identity", fill='blue') + coord_flip() + 
+  xlab("Terms") + ylab("TF-IDF") +
+  ggtitle("TFIDF-ranked Terms (1800-1849)")
+```
+
+### 1850~1899, the top TF-IDF ranked terms
+```{r}
+subM = terms[, doc1850]
+freq = rowSums(as.matrix(subM))
+head(sort(freq, decreasing = T), n=24)
+
+high.freq=tail(sort(freq),n=15)
+hfp.df=as.data.frame(sort(high.freq))
+hfp.df$names <- rownames(hfp.df) 
+ggplot(hfp.df, aes(reorder(names,high.freq), high.freq)) +
+  geom_bar(stat="identity", fill='Yellow') + coord_flip() + 
+  xlab("Terms") + ylab("TF-IDF") +
+  ggtitle("TFIDF-ranked Terms (1850-1899)")
+```
+
+### 1900~1949, the top TF-IDF ranked terms
+```{r}
+subM = terms[, doc1900]
+freq = rowSums(as.matrix(subM))
+head(sort(freq, decreasing = T), n=24)
+
+high.freq=tail(sort(freq),n=15)
+hfp.df=as.data.frame(sort(high.freq))
+hfp.df$names <- rownames(hfp.df) 
+ggplot(hfp.df, aes(reorder(names,high.freq), high.freq)) +
+  geom_bar(stat="identity", fill='red') + coord_flip() + 
+  xlab("Terms") + ylab("TF-IDF") +
+  ggtitle("TFIDF-ranked Terms (1900-1949)")
+```
+
+### 1950~1999, the top TF-IDF ranked terms
+```{r}
+subM = terms[, doc1950]
+freq = rowSums(as.matrix(subM))
+head(sort(freq, decreasing = T), n=24)
+
+high.freq=tail(sort(freq),n=15)
+hfp.df=as.data.frame(sort(high.freq))
+hfp.df$names <- rownames(hfp.df) 
+ggplot(hfp.df, aes(reorder(names,high.freq), high.freq)) +
+  geom_bar(stat="identity", fill='orange') + coord_flip() + 
+  xlab("Terms") + ylab("TF-IDF") +
+  ggtitle("TFIDF-ranked Terms (1950-1999)")
+```
+
+### 2000~2009, the top TF-IDF ranked terms
+```{r}
+subM = terms[, doc2000]
+freq = rowSums(as.matrix(subM))
+head(sort(freq, decreasing = T), n=24)
+
+high.freq=tail(sort(freq),n=15)
+hfp.df=as.data.frame(sort(high.freq))
+hfp.df$names <- rownames(hfp.df) 
+ggplot(hfp.df, aes(reorder(names,high.freq), high.freq)) +
+  geom_bar(stat="identity", fill='green') + coord_flip() + 
+  xlab("Terms") + ylab("TF-IDF") +
+  ggtitle("TFIDF-ranked Terms (2000-2009)")
+```
