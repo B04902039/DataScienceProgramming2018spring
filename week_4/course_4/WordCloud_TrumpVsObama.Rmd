@@ -1,26 +1,34 @@
+```{r}
 library(httr)
 library(NLP)
 library(RColorBrewer)
 library(wordcloud)
 library(tm)
 library(jsonlite)
+```
+
+```{r}
 token  = "EAACEdEose0cBAFtiYW8I9bVevm7VfPIS7Mi2s6YAVBv9EzVQr6eVxEjVxcp0JUD0tVdqVyaQEn3hDwes5eUQJuXA25X5ZB9fBSliQ1ZCv3eO3GerCniENGijmZAMSQ3rDwkz3SJ7qZAASVoZAXl7OV8igG370ZC4zdAm7ZCDlErptAmgrZBjiio2XSnexiWDqFlWYLbugO78GH1ZBKL3nEhpRrSJi0pb4Ye8ZD"
 B_Obama = "https://graph.facebook.com/v2.12/barackobama?fields=posts%7Bmessage%7D&access_token="
 D_Trump = "https://graph.facebook.com/v2.12/DonaldTrump?fields=posts%7Bmessage%7D&access_token="
+```
+
+```{r}
 url_Obama = paste0(B_Obama, token)
 url_Trump = paste0(D_Trump, token)
 res_O = httr::GET(url_Obama)
 res_T = httr::GET(url_Trump)
 posts_O  = httr::content(res_O)
 posts_T  = httr::content(res_T)
-
 texts_O = ""
 texts_T = ""
 for (i in c(1:25)) {
   texts_O = paste(texts_O, posts_O$posts$data[[i]]$message)
   texts_T = paste(texts_T, posts_T$posts$data[[i]]$message)
 }
+```
 
+```{r}
 doc_O = Corpus(VectorSource(texts_O))
 doc_T = Corpus(VectorSource(texts_T))
 
@@ -35,7 +43,9 @@ doc_T = tm_map(doc_T, removeWords, stopwords("english"))
 
 doc_O = tm_map(doc_O, removePunctuation)
 doc_T = tm_map(doc_T, removePunctuation)
+```
 
+```{r}
 m_O = as.matrix(TermDocumentMatrix(doc_O))
 m_T = as.matrix(TermDocumentMatrix(doc_T))
 
@@ -52,3 +62,4 @@ wordcloud(words = d_O$word, freq = d_O$freq, min.freq = 1,
 wordcloud(words = d_T$word, freq = d_T$freq, min.freq = 1,
           max.words=200, random.order=FALSE, rot.per=0.35, 
           colors=brewer.pal(8, "Dark2"))
+```
