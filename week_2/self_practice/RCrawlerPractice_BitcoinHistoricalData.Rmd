@@ -7,11 +7,6 @@ date: "`r Sys.Date()`"
 This markdown code crawl the data from the website and show the historical price and volumn of Bitcoin.
 
 ***
-
-note for TA: I run this code on my Linux machine. And thus the date column of the table would be all NA due to the problem of system   (see:https://www.rdocumentation.org/packages/base/versions/3.4.3/topics/as.Date)    
-Please, if you have time, rerun this code on Windows or Mac and the table would be correct. Thank you!
-
-***
 ```{r}
 library(rvest)
 coin = read_html("https://coinmarketcap.com/currencies/bitcoin/historical-data/?start=20170101&end=20180410")
