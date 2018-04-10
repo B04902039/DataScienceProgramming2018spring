@@ -36,6 +36,7 @@ head(sort(freq, decreasing = T), n=24)
 plot(sort(freq, decreasing = T),col="blue",main="TF-IDF frequencies", xlab="rank", ylab = "TF-IDF")
 ```
 
+
 ### Analysis every 50 years
 ```{r}
 doc_list = Docs(terms)
@@ -46,10 +47,12 @@ doc1950 = grep('.*_19[5-9][0-9]_[0-9]*.txt', doc_list, value = TRUE)
 doc2000 = grep('.*_20[0-4][0-9]_[0-9]*.txt', doc_list, value = TRUE)
 ```
 
+
 ### 1800~1849, the top TF-IDF ranked terms
 ```{r}
 subM = terms[, doc1800]
 freq = rowSums(as.matrix(subM))
+freq1800 = freq
 head(sort(freq, decreasing = T), n=24)
 
 high.freq=tail(sort(freq),n=15)
@@ -65,6 +68,7 @@ ggplot(hfp.df, aes(reorder(names,high.freq), high.freq)) +
 ```{r}
 subM = terms[, doc1850]
 freq = rowSums(as.matrix(subM))
+freq1850 = freq
 head(sort(freq, decreasing = T), n=24)
 
 high.freq=tail(sort(freq),n=15)
@@ -80,6 +84,7 @@ ggplot(hfp.df, aes(reorder(names,high.freq), high.freq)) +
 ```{r}
 subM = terms[, doc1900]
 freq = rowSums(as.matrix(subM))
+freq1900 = freq
 head(sort(freq, decreasing = T), n=24)
 
 high.freq=tail(sort(freq),n=15)
@@ -95,6 +100,7 @@ ggplot(hfp.df, aes(reorder(names,high.freq), high.freq)) +
 ```{r}
 subM = terms[, doc1950]
 freq = rowSums(as.matrix(subM))
+freq1950 = freq
 head(sort(freq, decreasing = T), n=24)
 
 high.freq=tail(sort(freq),n=15)
@@ -110,6 +116,7 @@ ggplot(hfp.df, aes(reorder(names,high.freq), high.freq)) +
 ```{r}
 subM = terms[, doc2000]
 freq = rowSums(as.matrix(subM))
+freq2000 = freq
 head(sort(freq, decreasing = T), n=24)
 
 high.freq=tail(sort(freq),n=15)
@@ -119,4 +126,48 @@ ggplot(hfp.df, aes(reorder(names,high.freq), high.freq)) +
   geom_bar(stat="identity", fill='green') + coord_flip() + 
   xlab("Terms") + ylab("TF-IDF") +
   ggtitle("TFIDF-ranked Terms (2000-2009)")
+```
+
+### The co-appearaence matrix of top-1000 TF-IDf ranked terms
+```{r}
+top1800 = attributes(head(sort(freq1800, decreasing=TRUE), n=1000))$names
+top1850 = attributes(head(sort(freq1850, decreasing=TRUE), n=1000))$names
+top1900 = attributes(head(sort(freq1900, decreasing=TRUE), n=1000))$names
+top1950 = attributes(head(sort(freq1950, decreasing=TRUE), n=1000))$names
+top2000 = attributes(head(sort(freq2000, decreasing=TRUE), n=1000))$names
+totallList = list(top1800, top1850, top1900, top1950, top2000)
+list_names <- c("1800~", "1850~", "1900~", "1950~", "2000~")
+
+M = (matrix(nrow = 5, ncol = 5))
+for (i in 1:5) {
+  for (j in 1:5) {
+    M[i,j] <- length(intersect(totallList[[i]], totallList[[j]]))
+  }
+}
+rownames(M) = list_names
+colnames(M) = list_names
+print(M)
+```
+
+Appearently, the far away, the larger the difference usage of word. But it is interesting that the term ranked high in 2000~ are very different than any other time periods. More than 50% difference compared with the word used in 1950-.
+
+### The co-appearaence matrix of top-100 TF-IDf ranked terms
+```{r}
+top1800 = attributes(head(sort(freq1800, decreasing=TRUE), n=100))$names
+top1850 = attributes(head(sort(freq1850, decreasing=TRUE), n=100))$names
+top1900 = attributes(head(sort(freq1900, decreasing=TRUE), n=100))$names
+top1950 = attributes(head(sort(freq1950, decreasing=TRUE), n=100))$names
+top2000 = attributes(head(sort(freq2000, decreasing=TRUE), n=100))$names
+totallList = list(top1800, top1850, top1900, top1950, top2000)
+list_names <- c("1800~", "1850~", "1900~", "1950~", "2000~")
+
+M = (matrix(nrow = 5, ncol = 5))
+for (i in 1:5) {
+  for (j in 1:5) {
+    M[i,j] <- length(intersect(totallList[[i]], totallList[[j]]))
+  }
+}
+rownames(M) = list_names
+colnames(M) = list_names
+print(M)
 ```
