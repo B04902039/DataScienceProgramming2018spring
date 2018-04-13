@@ -5,6 +5,7 @@ date: "`r Sys.Date()`"
 ---
 ## Summary  
 This markdown code crawl the data from the website and show the historical price and volumn of Bitcoin.
+
 ***
 ```{r}
 library(rvest)
@@ -18,13 +19,15 @@ low = html_nodes(coin, 'td:nth-child(4)')
 close = html_nodes(coin, 'td:nth-child(5)')
 volume = html_nodes(coin, 'td:nth-child(6)')
 
-date = html_nodes(coin, '.text-right .text-left')
+date = as.Date(html_text(date), '%b %d, %Y')
 title = html_text(title)
-open = html_text(open)
-high = html_text(high)
-low = html_text(low)
-close = html_text(close)
+open = as.double(html_text(open))
+high = as.double(html_text(high))
+low = as.double(html_text(low))
+close = as.double(html_text(close))
 volume = html_text(volume)
+volume = gsub(',', x=volume, replacement='')
+volume = as.numeric(volume)/1000000
 
 table = data.frame(date, open, high, low, close, volume)
 head(table, n=10)
@@ -33,5 +36,14 @@ head(table, n=10)
 
 ```{r}
 library(ggplot2)
-ggplot(data = table, aes(x=date, y=close, group=1))+geom_line()
+p <- ggplot(data = table, aes(x=date))
+# the area graph of trading volume
+p <- p + geom_area(aes(y=volume), colour='pink', fill='pink')
+# the line graph of closing price
+p <- p + geom_line(aes(y=close), size=1, colour='blue')
+
+p <- p + scale_y_continuous(sec.axis = sec_axis(~.*5, name="close price[US$]"))
+p <- p + labs(y="volume[million US$]", x="Date")
+p
+
 ```
