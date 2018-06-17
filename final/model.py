@@ -22,7 +22,16 @@ for i in [14, 15, 16]:
     x[:, i] = le.fit_transform(x[:, i])
     
 # models
-RF = ensemble.RandomForestRegressor(random_state=9487)
-result_RF = model_selection.cross_validate(RF, x, y, cv=5, n_jobs=-1, scoring='neg_mean_squared_error', return_train_score=True)
-print('5-fold validation acc:', result_RF['test_score'].mean())
-result_RF
+RF = ensemble.RandomForestRegressor(random_state=1111)
+result_RF = model_selection.cross_validate(RF, x, y, cv=5, n_jobs=-1, scoring=['neg_mean_squared_error', 'r2'], return_train_score=True)
+print('5-fold validation mean R2 score:', result_RF['test_r2'].mean())
+print('5-fold validation RMSE:', np.sqrt(-result_RF['test_neg_mean_squared_error'].mean()))
+print(result_RF)
+
+import pickle
+print(len(x))
+RF.fit(x, y)
+filename = 'random_forest_model.pkl'
+with open(filename, 'wb') as f:
+    pickle.dump(RF, f)
+    print('Model save to {}'.format(filename))
