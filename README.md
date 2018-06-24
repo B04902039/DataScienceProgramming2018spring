@@ -57,7 +57,7 @@ ____
 ### Project 3 (week8):
   >[Titanic EDA (ipynb notbook)](https://b04902039.github.io/DataScienceProgramming2018spring/Project3/titanic_dataset_discussion.html)  
 
-  >[Titanic model analysis (ipynb notebook)](https://github.com/B04902039/DataScienceProgramming2018spring/blob/master/Project3/Project%203%20Titanic%20dataset.html)  
+  >[Titanic model analysis (ipynb notebook)](https://b04902039.github.io/DataScienceProgramming2018spring/Project3/Project%203%20Titanic%20dataset.html)  
   
   >[csv link](https://github.com/B04902039/DataScienceProgramming2018spring/blob/master/Project3/MyPrediciton.csv)
 
