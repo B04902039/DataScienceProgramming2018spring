@@ -27,14 +27,14 @@ with open('label_encoder.pkl', 'wb') as f:
 #y -= y.mean()
 #y /= y.std()
 
-'''
+
 # models
-RF = ensemble.RandomForestRegressor(random_state=1111)
+RF = ensemble.RandomForestRegressor(random_state=1111, n_estimators=100, criterion='mae')
 result_RF = model_selection.cross_validate(RF, x, y, cv=5, n_jobs=-1, scoring=['neg_mean_squared_error', 'r2'], return_train_score=True)
 print('5-fold validation mean R2 score:', result_RF['test_r2'].mean())
 print('5-fold validation RMSE:', np.sqrt(-result_RF['test_neg_mean_squared_error'].mean()))
 #print(result_RF)
-
+'''
 RF.fit(x, y)
 filename = 'random_forest_model.pkl'
 with open(filename, 'wb') as f:
